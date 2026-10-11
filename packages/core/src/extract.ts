@@ -6,7 +6,7 @@
  */
 
 import { decodeEntities, squash } from './entities';
-import { contentHash, featureSimhash, simhash } from './hash';
+import { contentHash, minhash, simhash } from './hash';
 import { checkJsonLd } from './structured-data';
 import type {
   CustomExtractor,
@@ -29,7 +29,6 @@ const MAX_IMAGES = 1_000;
 const MAX_EXTRACTION_VALUES = 20;
 /** Elements deeper than this rarely say anything about the template, only about the content. */
 const TEMPLATE_MAX_DEPTH = 12;
-const TEMPLATE_MAX_CLASSES = 4;
 
 /** Elements whose text is never visible page content. */
 const SKIP_SELECTOR = 'script, style, noscript, template, svg, title, textarea, select';
@@ -71,7 +70,7 @@ export async function extractPage(
     text: null,
     contentHash: '',
     simhash: '',
-    templateHash: '',
+    templateSignature: null,
     insecureForms: 0,
     mixedContent: [],
     extractions: {},
@@ -408,20 +407,19 @@ export async function extractPage(
   data.text = opts.keepText ? text.slice(0, KEEP_TEXT_CHARS) : null;
   data.contentHash = await contentHash(text);
   data.simhash = simhash(text);
-  data.templateHash = featureSimhash(templateFeatures);
+  data.templateSignature = minhash(templateFeatures);
   data.mixedContent = [...new Set(data.mixedContent)].slice(0, 50);
   return data;
 }
 
-/** `div.card.grid`: tag plus up to four sorted class names, so it is stable across pages. */
+/**
+ * `div.card`: the tag and its first class. The first class usually names the component; later
+ * ones are often modifiers that carry data (`star-rating Three`, `card--sale`), which would make
+ * pages of one template look different.
+ */
 function elementToken(el: Element): string {
-  const classes = (el.getAttribute('class') ?? '')
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean)
-    .sort()
-    .slice(0, TEMPLATE_MAX_CLASSES);
-  return [el.tagName, ...classes].join('.');
+  const first = (el.getAttribute('class') ?? '').trim().toLowerCase().split(/\s+/)[0];
+  return first ? `${el.tagName}.${first}` : el.tagName;
 }
 
 function typesBlock(format: 'microdata' | 'rdfa', types: Set<string>): StructuredDataBlock {

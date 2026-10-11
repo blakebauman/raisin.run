@@ -1,7 +1,7 @@
 /**
  * Page-type grouping: turns a crawl's HTML pages into "340 product pages, 8 categories, 1 home
  * page". Two signals, both captured at ingest: the URL pattern (`urlPattern`) and the template
- * fingerprint (`PageData.templateHash`, a simhash of element structure). Pure, so it is tested
+ * fingerprint (`PageData.templateSignature`, a MinHash of element structure). Pure, so it is tested
  * without a Durable Object; the Crawl DO feeds it rows and writes back the result.
  *
  *   1. Group pages by URL pattern.
@@ -15,15 +15,22 @@
  * member is within the threshold of its representative, never just of another member.
  */
 
-/** Pages further than this from their pattern's representative split into a separate group. */
-export const SPLIT_BITS = 8;
-/** Groups from different patterns merge when their representatives are at most this far apart. */
-export const MERGE_BITS = 6;
+import { MINHASH_SLOTS } from './hash';
+
+// Template similarity is the estimated Jaccard similarity of two pages' structural features. On
+// a real catalogue site, pages of one template scored 0.8–1.0 (optional blocks such as "related
+// products" make the difference) and different templates sharing the site's header and footer
+// scored about 0.3. Both thresholds sit inside that gap.
+
+/** Pages less similar than this to their pattern's representative split into a separate group. */
+export const SPLIT_SIMILARITY = 0.6;
+/** Groups from different patterns merge when their representatives are at least this similar. */
+export const MERGE_SIMILARITY = 0.7;
 
 export type PageTypeInput = {
   id: number;
   pattern: string;
-  /** Template simhash, 16 hex characters. */
+  /** Template MinHash signature, as `minhash()` returns it. */
   template: string;
   /** Comma-separated structured data types, as stored in `pages.structured_types`. */
   structuredTypes: string | null;
@@ -42,11 +49,11 @@ export type PageType = {
   sampleId: number;
 };
 
-type Hash = { hi: number; lo: number };
+type Signature = Uint16Array;
 
 type Group = {
   pattern: string;
-  rep: Hash;
+  rep: Signature;
   pages: PageTypeInput[];
 };
 
@@ -56,11 +63,11 @@ export function groupPageTypes(pages: PageTypeInput[]): PageType[] {
   // 1 + 2: by pattern, then by template within each pattern.
   const byPattern = new Map<string, Group[]>();
   for (const page of ordered) {
-    const hash = parseHash(page.template);
+    const signature = parseSignature(page.template);
     const groups = byPattern.get(page.pattern) ?? [];
-    const home = groups.find((g) => distance(g.rep, hash) <= SPLIT_BITS);
+    const home = groups.find((g) => similarity(g.rep, signature) >= SPLIT_SIMILARITY);
     if (home) home.pages.push(page);
-    else groups.push({ pattern: page.pattern, rep: hash, pages: [page] });
+    else groups.push({ pattern: page.pattern, rep: signature, pages: [page] });
     byPattern.set(page.pattern, groups);
   }
 
@@ -68,9 +75,9 @@ export function groupPageTypes(pages: PageTypeInput[]): PageType[] {
   const groups = [...byPattern.values()]
     .flat()
     .sort((a, b) => b.pages.length - a.pages.length || byImportance(a.pages[0]!, b.pages[0]!));
-  const clusters: { rep: Hash; groups: Group[] }[] = [];
+  const clusters: { rep: Signature; groups: Group[] }[] = [];
   for (const group of groups) {
-    const home = clusters.find((c) => distance(c.rep, group.rep) <= MERGE_BITS);
+    const home = clusters.find((c) => similarity(c.rep, group.rep) >= MERGE_SIMILARITY);
     if (home) home.groups.push(group);
     else clusters.push({ rep: group.rep, groups: [group] });
   }
@@ -122,19 +129,16 @@ function byImportance(a: PageTypeInput, b: PageTypeInput): number {
   return (b.linkScore ?? 0) - (a.linkScore ?? 0) || a.id - b.id;
 }
 
-function parseHash(hex: string): Hash {
-  return {
-    hi: Number.parseInt(hex.slice(0, 8), 16) | 0,
-    lo: Number.parseInt(hex.slice(8, 16), 16) | 0,
-  };
+function parseSignature(hex: string): Signature {
+  const out = new Uint16Array(MINHASH_SLOTS);
+  for (let i = 0; i < MINHASH_SLOTS; i++) {
+    out[i] = Number.parseInt(hex.slice(i * 4, i * 4 + 4), 16) || 0;
+  }
+  return out;
 }
 
-function distance(a: Hash, b: Hash): number {
-  return popcount(a.hi ^ b.hi) + popcount(a.lo ^ b.lo);
-}
-
-function popcount(x: number): number {
-  let v = x - ((x >>> 1) & 0x55555555);
-  v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
-  return (((v + (v >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+function similarity(a: Signature, b: Signature): number {
+  let same = 0;
+  for (let i = 0; i < MINHASH_SLOTS; i++) if (a[i] === b[i]) same++;
+  return same / MINHASH_SLOTS;
 }

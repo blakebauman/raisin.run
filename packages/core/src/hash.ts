@@ -80,3 +80,52 @@ export function simhashBands(hex: string): [number, number, number, number] {
 export function simhashSimilarity(a: string, b: string): number {
   return Math.round(((64 - hammingDistance(a, b)) / 64) * 100);
 }
+
+/** MinHash signature length. 64 slots estimate Jaccard similarity to about ±0.06. */
+export const MINHASH_SLOTS = 64;
+const MINHASH_SEEDS = Array.from({ length: MINHASH_SLOTS }, (_, i) =>
+  fmix32(Math.imul(i + 1, 0x9e3779b9)),
+);
+
+/**
+ * MinHash signature of a feature set: for each of 64 hash functions, the smallest hash over the
+ * features, keeping the low 16 bits (b-bit MinHash). The share of equal slots between two
+ * signatures estimates the Jaccard similarity of the sets. 256 hex characters; null for no features.
+ */
+export function minhash(features: Iterable<string>): string | null {
+  const mins = new Uint32Array(MINHASH_SLOTS).fill(0xffffffff);
+  let any = false;
+  for (const feature of features) {
+    any = true;
+    const base = fnv1a32(feature);
+    for (let i = 0; i < MINHASH_SLOTS; i++) {
+      const h = fmix32(base ^ MINHASH_SEEDS[i]!);
+      if (h < mins[i]!) mins[i] = h;
+    }
+  }
+  if (!any) return null;
+  return [...mins].map((m) => (m & 0xffff).toString(16).padStart(4, '0')).join('');
+}
+
+/** Estimated Jaccard similarity of two `minhash` signatures, 0–1. */
+export function minhashSimilarity(a: string, b: string): number {
+  let same = 0;
+  for (let i = 0; i < MINHASH_SLOTS * 4; i += 4) {
+    if (a.slice(i, i + 4) === b.slice(i, i + 4)) same++;
+  }
+  return same / MINHASH_SLOTS;
+}
+
+function fnv1a32(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193);
+  return h >>> 0;
+}
+
+/** MurmurHash3's finaliser: a cheap, well-mixed 32-bit permutation. */
+function fmix32(x: number): number {
+  let h = x >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  return (h ^ (h >>> 16)) >>> 0;
+}

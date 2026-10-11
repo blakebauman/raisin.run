@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { RULES } from '../src/audits/rules';
-import { featureSimhash, hammingDistance, simhash, simhashBands } from '../src/hash';
+import {
+  featureSimhash,
+  hammingDistance,
+  minhash,
+  minhashSimilarity,
+  simhash,
+  simhashBands,
+} from '../src/hash';
 import { canonicalFromLinkHeader, indexability, isValidHreflang } from '../src/indexability';
 import { descriptionWidth, titleWidth, truncateToWidth } from '../src/serp';
 import { parseSitemap, parseTextSitemap } from '../src/sitemap';
@@ -62,6 +69,17 @@ describe('simhash', () => {
   it('hashes no features to all zeros', () => {
     expect(simhash('')).toBe('0'.repeat(16));
     expect(featureSimhash([])).toBe('0'.repeat(16));
+  });
+  it('estimates Jaccard similarity with MinHash', () => {
+    const set = (from: number, to: number) =>
+      Array.from({ length: to - from }, (_, i) => `feature-${from + i}`);
+    const a = minhash(set(0, 100))!;
+    expect(minhashSimilarity(a, minhash(set(0, 100))!)).toBe(1);
+    // Jaccard 80/120 ≈ 0.67 and 0/200 = 0.
+    expect(minhashSimilarity(a, minhash(set(20, 120))!)).toBeGreaterThan(0.5);
+    expect(minhashSimilarity(a, minhash(set(20, 120))!)).toBeLessThan(0.85);
+    expect(minhashSimilarity(a, minhash(set(100, 200))!)).toBeLessThan(0.1);
+    expect(minhash([])).toBeNull();
   });
   it('splits into four 16-bit bands', () => {
     expect(simhashBands('0001000200030004')).toEqual([1, 2, 3, 4]);

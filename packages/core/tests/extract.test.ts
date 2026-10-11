@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { extractPage } from '../src/extract';
-import { hammingDistance } from '../src/hash';
+import { minhashSimilarity } from '../src/hash';
 import { ARTICLE } from './fixtures';
 
 describe('extractPage', async () => {
@@ -125,20 +125,27 @@ describe('template fingerprint', async () => {
     product('cod', 'x', 3).replace('<h1', '<span class="badge sale">Sale</span><h1'),
     url,
   );
+  const modifier = await extractPage(
+    product('cod', 'x', 3).replace('class="btn buy"', 'class="btn sold-out"'),
+    url,
+  );
 
-  it('is a 64-bit hex simhash', () => {
-    expect(a.templateHash).toMatch(/^[0-9a-f]{16}$/);
+  it('is a 64-slot MinHash signature', () => {
+    expect(a.templateSignature).toMatch(/^[0-9a-f]{256}$/);
   });
 
-  it('ignores text and repeated elements', () => {
-    expect(a.templateHash).toBe(b.templateHash);
+  it('ignores text, repeated elements and modifier classes', () => {
+    expect(a.templateSignature).toBe(b.templateSignature);
+    expect(a.templateSignature).toBe(modifier.templateSignature);
   });
 
-  it('stays close when a template varies slightly', () => {
-    expect(hammingDistance(a.templateHash, withBadge.templateHash)).toBeLessThanOrEqual(8);
+  it('stays similar when a template varies slightly', () => {
+    expect(minhashSimilarity(a.templateSignature!, withBadge.templateSignature!)).toBeGreaterThan(
+      0.75,
+    );
   });
 
   it('separates different templates', () => {
-    expect(hammingDistance(a.templateHash, c.templateHash)).toBeGreaterThan(12);
+    expect(minhashSimilarity(a.templateSignature!, c.templateSignature!)).toBeLessThan(0.4);
   });
 });

@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { groupPageTypes, type PageTypeInput } from '../src/page-types';
 
-const PRODUCT = '0123456789abcdef';
-const PRODUCT_VARIANT = '0123456789abcd0f'; // 3 bits from PRODUCT
-const ARTICLE = 'fedcba9876543210';
-const STUB = '0123456789ab0000'; // 12 bits from PRODUCT: same pattern, different template
+/** A 64-slot signature: slot i holds `base + i`, except the first `changed` slots. */
+const signature = (base: number, changed = 0) =>
+  Array.from({ length: 64 }, (_, i) =>
+    (i < changed ? 0xf000 + i : base + i).toString(16).padStart(4, '0'),
+  ).join('');
+
+const PRODUCT = signature(0x100);
+const PRODUCT_VARIANT = signature(0x100, 10); // similarity 54/64 ≈ 0.84
+const STUB = signature(0x100, 30); // similarity 34/64 ≈ 0.53: same pattern, different template
+const ARTICLE = signature(0x800);
 
 let nextId = 1;
 const page = (

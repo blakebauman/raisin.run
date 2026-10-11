@@ -1,6 +1,8 @@
 import { Link } from 'react-router';
 import { EmptyState, type Severity, SeverityDot } from './common';
 
+type Issue = { id: string; label: string; tab: string; severity: Severity; n: number };
+
 export type PageTypeView = {
   id: number;
   label: string;
@@ -8,14 +10,23 @@ export type PageTypeView = {
   pageCount: number;
   indexableCount: number;
   sample: { id: number; url: string };
-  issues: { id: string; label: string; tab: string; severity: Severity; n: number }[];
+  /** Issues on this type's pages, minus the site-wide ones. */
+  issues: Issue[];
 };
 
 const SHOWN_PATTERNS = 3;
 const SHOWN_ISSUES = 3;
 
 /** The crawl's inventory grouped by template: one row per page type. */
-export function PageTypes({ types, analysed }: { types: PageTypeView[]; analysed: boolean }) {
+export function PageTypes({
+  types,
+  sitewide,
+  analysed,
+}: {
+  types: PageTypeView[];
+  sitewide: Issue[];
+  analysed: boolean;
+}) {
   if (types.length === 0) {
     return analysed ? (
       <EmptyState title="No page types for this crawl">
@@ -37,6 +48,7 @@ export function PageTypes({ types, analysed }: { types: PageTypeView[]; analysed
         {types.length === 1 ? 'type' : 'types'}, grouped by URL pattern and page template. Issues
         shared by most pages of a type usually need one template fix.
       </p>
+      {sitewide.length > 0 && <Sitewide issues={sitewide} />}
       <table className="w-full text-sm">
         <thead className="sticky top-0 bg-card text-left text-xs text-muted-foreground">
           <tr className="border-b">
@@ -57,7 +69,7 @@ export function PageTypes({ types, analysed }: { types: PageTypeView[]; analysed
                 >
                   {t.label}
                 </Link>
-                <PatternList patterns={t.patterns} />
+                {t.patterns.length > 1 && <PatternList patterns={t.patterns} />}
               </td>
               <td className="px-3 py-2.5 text-right tabular">{t.pageCount.toLocaleString()}</td>
               <td className="px-3 py-2.5 text-right tabular text-muted-foreground">
@@ -83,6 +95,30 @@ export function PageTypes({ types, analysed }: { types: PageTypeView[]; analysed
   );
 }
 
+/** Issues on nearly every page of every type: one site-wide fix each, listed once. */
+function Sitewide({ issues }: { issues: Issue[] }) {
+  return (
+    <section aria-labelledby="sitewide-issues" className="border-b px-6 py-3 text-sm">
+      <h2 id="sitewide-issues" className="text-xs font-medium text-muted-foreground">
+        On every page type
+      </h2>
+      <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+        {issues.map((i) => (
+          <li key={i.id}>
+            <Link
+              to={`?tab=${i.tab}&filter=${i.id}`}
+              className="inline-flex items-baseline gap-1.5 hover:underline"
+            >
+              <SeverityDot severity={i.severity} className="translate-y-[-1px]" />
+              {i.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function PatternList({ patterns }: { patterns: string[] }) {
   const more = patterns.length - SHOWN_PATTERNS;
   return (
@@ -102,7 +138,8 @@ function PatternList({ patterns }: { patterns: string[] }) {
 }
 
 function IssueList({ type }: { type: PageTypeView }) {
-  if (type.issues.length === 0) return <span className="text-muted-foreground">None</span>;
+  if (type.issues.length === 0)
+    return <span className="text-muted-foreground">None of its own</span>;
   const more = type.issues.length - SHOWN_ISSUES;
   return (
     <ul className="space-y-0.5">

@@ -93,10 +93,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   ]);
   let grid: GridResult | null = null;
   let overview: Overview | null = null;
-  let pageTypes: PageTypeView[] | null = null;
+  let pageTypes: { types: PageTypeView[]; sitewide: IssueView[] } | null = null;
   let activeType: { id: number; label: string } | null = null;
   if (tabId === PAGE_TYPES_VIEW) {
-    pageTypes = (await api.pageTypes(m.orgId, crawl.id)).map(toPageTypeView);
+    pageTypes = toPageTypesView(await api.pageTypes(m.orgId, crawl.id));
   } else if (tab) {
     if (pageType !== null) {
       const found = (await api.pageTypes(m.orgId, crawl.id)).find((t) => t.id === pageType);
@@ -198,31 +198,64 @@ function parsePageType(value: string | null): number | null {
 
 const SEVERITY_RANK: Record<Severity, number> = { issue: 0, warning: 1, opportunity: 2 };
 
-/** Attach rule labels on the server, so the rule catalogue stays out of the browser bundle. */
-function toPageTypeView(t: PageTypeSummary): PageTypeView {
-  const issues = t.issues.flatMap((i) => {
-    const rule = RULES_BY_ID.get(i.ruleId);
-    return rule
-      ? [
-          {
-            id: rule.id,
-            label: rule.label,
-            tab: rule.tab,
-            severity: rule.severity as Severity,
-            n: i.n,
-          },
-        ]
-      : [];
-  });
-  issues.sort((a, b) => SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity] || b.n - a.n);
+/** Rules that flag at least this share of all typed pages are listed once, as site-wide. */
+const SITEWIDE_SHARE = 0.95;
+
+type IssueView = PageTypeView['issues'][number];
+
+/**
+ * Attach rule labels on the server, so the rule catalogue stays out of the browser bundle, and
+ * pull out issues that affect nearly every page: they say nothing about any one template.
+ */
+function toPageTypesView(types: PageTypeSummary[]): {
+  types: PageTypeView[];
+  sitewide: IssueView[];
+} {
+  const issueView = (ruleId: string, n: number): IssueView | null => {
+    const rule = RULES_BY_ID.get(ruleId);
+    if (!rule) return null;
+    const tab = TABS_BY_ID.get(rule.tab as never)?.label;
+    return {
+      id: rule.id,
+      label: tab ? `${tab}: ${rule.label}` : rule.label,
+      tab: rule.tab,
+      severity: rule.severity as Severity,
+      n,
+    };
+  };
+  const bySeverity = (a: IssueView, b: IssueView) =>
+    SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity] || b.n - a.n;
+
+  const totalPages = types.reduce((n, t) => n + t.pageCount, 0);
+  const perRule = new Map<string, number>();
+  for (const t of types) {
+    for (const i of t.issues) perRule.set(i.ruleId, (perRule.get(i.ruleId) ?? 0) + i.n);
+  }
+  const sitewideIds = new Set(
+    types.length > 1
+      ? [...perRule].filter(([, n]) => n >= totalPages * SITEWIDE_SHARE).map(([id]) => id)
+      : [],
+  );
+  const sitewide = [...sitewideIds]
+    .map((id) => issueView(id, perRule.get(id)!))
+    .filter((i): i is IssueView => i !== null)
+    .sort(bySeverity);
+
   return {
-    id: t.id,
-    label: t.label,
-    patterns: t.patterns,
-    pageCount: t.pageCount,
-    indexableCount: t.indexableCount,
-    sample: t.sample,
-    issues,
+    sitewide,
+    types: types.map((t) => ({
+      id: t.id,
+      label: t.label,
+      patterns: t.patterns,
+      pageCount: t.pageCount,
+      indexableCount: t.indexableCount,
+      sample: t.sample,
+      issues: t.issues
+        .filter((i) => !sitewideIds.has(i.ruleId))
+        .map((i) => issueView(i.ruleId, i.n))
+        .filter((i): i is IssueView => i !== null)
+        .sort(bySeverity),
+    })),
   };
 }
 
@@ -483,7 +516,11 @@ export default function CrawlPage({ loaderData }: Route.ComponentProps) {
         <div className="flex min-w-0 flex-1 flex-col">
           {overview && <CrawlOverview overview={overview} progress={progress} />}
           {pageTypes && (
-            <PageTypes types={pageTypes} analysed={!IN_PROGRESS.has(progress.status)} />
+            <PageTypes
+              types={pageTypes.types}
+              sitewide={pageTypes.sitewide}
+              analysed={!IN_PROGRESS.has(progress.status)}
+            />
           )}
           {grid && tab && (
             <>

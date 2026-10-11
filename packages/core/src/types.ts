@@ -205,8 +205,8 @@ export type PageData = {
   text: string | null;
   contentHash: string;
   simhash: string;
-  /** Simhash of the page's element structure (tags and classes, no text); see extract.ts. */
-  templateHash: string;
+  /** MinHash of the page's element structure (tags and classes, no text); see extract.ts. */
+  templateSignature: string | null;
   insecureForms: number;
   mixedContent: string[];
   extractions: Record<string, string[]>;

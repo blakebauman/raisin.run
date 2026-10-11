@@ -166,6 +166,8 @@ function segmentPattern(segment: string, isLast: boolean): string {
 
 function placeholder(stem: string, isLast: boolean): string {
   if (/^\d+$/.test(stem)) return '{n}';
+  const paged = stem.match(/^(page|pg|p)([-_]?)\d+$/i);
+  if (paged) return `${paged[1]!.toLowerCase()}${paged[2]}{n}`;
   if (/^\d{4}-\d{2}(?:-\d{2})?$/.test(stem)) return '{date}';
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(stem)) return '{id}';
   if (/^[0-9a-f]{12,}$/i.test(stem) && /\d/.test(stem)) return '{id}';

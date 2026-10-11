@@ -188,9 +188,9 @@ export function mapResult(r: FetchResult, scope: Scope): MappedResult {
 
   // The rendered DOM's template when there is one: a JavaScript app's raw HTML is only its shell.
   const pattern = isHtml && internal ? pagePattern(r.url, scope) : null;
-  const template = render?.page.templateHash ?? page?.templateHash;
+  const template = render?.page.templateSignature ?? page?.templateSignature;
   const shape: PageRow | null =
-    pattern && template ? { id, url_pattern: pattern, tpl_simhash: template } : null;
+    pattern && template ? { id, url_pattern: pattern, tpl_minhash: template } : null;
 
   // Links: raw-HTML links, plus any that only the rendered DOM has (flagged js_only).
   const links: LinkRow[] = [];

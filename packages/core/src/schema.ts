@@ -221,7 +221,7 @@ export const CRAWL_SCHEMA: string[] = [
   `CREATE TABLE IF NOT EXISTS page_shapes (
     id INTEGER PRIMARY KEY,
     url_pattern TEXT NOT NULL,
-    tpl_simhash TEXT NOT NULL,
+    tpl_minhash TEXT NOT NULL,
     page_type_id INTEGER
   )`,
   `CREATE INDEX IF NOT EXISTS page_shapes_type ON page_shapes (page_type_id)`,

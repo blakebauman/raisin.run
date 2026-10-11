@@ -956,7 +956,7 @@ export class CrawlDO extends DurableObject<Env> {
         structuredTypes: string | null;
         linkScore: number | null;
       }>(
-        `SELECT p.id, s.url_pattern AS pattern, s.tpl_simhash AS template,
+        `SELECT p.id, s.url_pattern AS pattern, s.tpl_minhash AS template,
            p.structured_types AS structuredTypes, p.link_score AS linkScore
          FROM pages p JOIN page_shapes s ON s.id = p.id
          WHERE p.status = 200`,

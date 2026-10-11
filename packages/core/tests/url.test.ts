@@ -90,6 +90,7 @@ describe('urlPattern', () => {
     ['https://e.com/a-very-long-category-name/x', '/{slug}/x'],
     ['https://e.com/search?q=shoes&utm_source=x&page=2', '/search?page&q'],
     ['https://e.com/caf%C3%A9-cr%C3%A8me', '/{slug}'],
+    ['https://e.com/books/poetry_23/page-2.html', '/books/{slug}/page-{n}.html'],
   ])('%s → %s', (input, expected) => {
     expect(urlPattern(input)).toBe(expected);
   });
