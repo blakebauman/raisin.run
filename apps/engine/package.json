@@ -1,0 +1,29 @@
+{
+  "name": "@raisin/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Crawl engine Worker: Crawl and HostLimiter Durable Objects, fetch/render queue consumers, the CrawlLifecycle Workflow and the RPC entrypoint the web app calls.",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "test": "vitest run",
+    "lint": "biome check .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/puppeteer": "^1.1.0",
+    "@raisin/core": "workspace:*",
+    "@raisin/db": "workspace:*",
+    "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "catalog:",
+    "@raisin/fixture-site": "workspace:*",
+    "@raisin/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

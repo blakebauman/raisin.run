@@ -1,0 +1,22 @@
+{
+  "name": "@raisin/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "D1 control-plane schema (Drizzle) and migrations: auth, orgs, projects, crawls, schedules, API keys, usage.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@raisin/typescript-config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

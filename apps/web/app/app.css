@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* `@raisin/ui` is consumed as raw source from outside this app's root, so Tailwind's
+   automatic content detection never sees it. Without this, utilities that appear only
+   in a primitive (`bg-primary`, the `focus-visible:ring-*` set) are dropped from the
+   build and the component renders unstyled. */
+@source "../../../packages/ui/src";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Map shadcn design tokens onto Tailwind's theme so `bg-background`,
+   `text-muted-foreground`, `rounded-lg`, etc. resolve. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* Opaque row hover, so sticky grid cells can share it without showing what scrolls beneath. */
+  --color-row-hover: var(--row-hover);
+  /* Audit severities, used by dots, counts and the issues panel. */
+  --color-issue: var(--issue);
+  --color-warning: var(--warning);
+  --color-opportunity: var(--opportunity);
+  /* HTTP status classes in the grid. */
+  --color-status-ok: var(--status-ok);
+  --color-status-redirect: var(--status-redirect);
+  --color-status-client: var(--status-client);
+  --color-status-server: var(--status-server);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Neutral (zinc) palette with a raisin-purple primary. Light, then dark. */
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.002 286);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.45 0.14 320);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.5 0.016 285.938);
+  --accent: oklch(0.955 0.012 320);
+  --accent-foreground: oklch(0.3 0.08 320);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.88 0.006 286.286);
+  --ring: oklch(0.55 0.14 320);
+  --issue: oklch(0.58 0.21 25);
+  --warning: oklch(0.7 0.15 65);
+  --opportunity: oklch(0.58 0.13 240);
+  --status-ok: oklch(0.52 0.13 155);
+  --status-redirect: oklch(0.52 0.12 240);
+  --status-client: oklch(0.58 0.14 60);
+  --status-server: oklch(0.55 0.2 25);
+  --row-hover: color-mix(in oklch, var(--muted) 60%, var(--background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.141 0.005 285.823);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.18 0.006 285.885);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.21 0.006 285.885);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.72 0.12 320);
+    --primary-foreground: oklch(0.18 0.03 320);
+    --secondary: oklch(0.274 0.006 286.033);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.274 0.006 286.033);
+    --muted-foreground: oklch(0.705 0.015 286.067);
+    --accent: oklch(0.3 0.04 320);
+    --accent-foreground: oklch(0.95 0.02 320);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.72 0.12 320);
+    --issue: oklch(0.7 0.18 25);
+    --warning: oklch(0.82 0.15 80);
+    --opportunity: oklch(0.75 0.11 235);
+    --status-ok: oklch(0.8 0.14 160);
+    --status-redirect: oklch(0.78 0.1 235);
+    --status-client: oklch(0.82 0.14 75);
+    --status-server: oklch(0.72 0.18 25);
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased;
+  }
+  ::selection {
+    background-color: color-mix(in oklch, var(--primary) 25%, transparent);
+  }
+  /* Plain links get the system focus ring instead of the browser default. Buttons and other
+     primitives set their own ring in the utilities layer, which wins over this. */
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 4px);
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}

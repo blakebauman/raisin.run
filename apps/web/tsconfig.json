@@ -1,0 +1,17 @@
+{
+  "extends": "@raisin/typescript-config/react-app.json",
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "rootDirs": [".", "./.react-router/types"],
+    "paths": { "~/*": ["./app/*"] },
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    ".react-router/types/**/*",
+    "app/**/*",
+    "workers/**/*",
+    "worker-configuration.d.ts",
+    "vite.config.ts",
+    "react-router.config.ts"
+  ]
+}

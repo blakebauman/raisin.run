@@ -1,0 +1,78 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "raisin-engine",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Reachable only through the web app's service binding: no workers.dev URL, no routes.
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "upload_source_maps": true,
+  "limits": {
+    // A Workflow export step and a large ingest batch both make many internal subrequests.
+    "subrequests": 100000,
+    "cpu_ms": 300000
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "CRAWL", "class_name": "CrawlDO" },
+      { "name": "HOST_LIMITER", "class_name": "HostLimiter" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CrawlDO", "HostLimiter"] }],
+  "queues": {
+    "producers": [
+      { "binding": "FETCH_QUEUE", "queue": "raisin-fetch" },
+      { "binding": "RENDER_QUEUE", "queue": "raisin-render" }
+    ],
+    "consumers": [
+      {
+        "queue": "raisin-fetch",
+        "max_batch_size": 10,
+        "max_batch_timeout": 1,
+        "max_concurrency": 50,
+        "max_retries": 3,
+        "dead_letter_queue": "raisin-fetch-dlq"
+      },
+      {
+        // Sized to the Browser Run concurrency budget: 20 consumers × 2 pages.
+        "queue": "raisin-render",
+        "max_batch_size": 2,
+        "max_batch_timeout": 1,
+        "max_concurrency": 20,
+        "max_retries": 2,
+        "dead_letter_queue": "raisin-render-dlq"
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "name": "raisin-crawl-lifecycle",
+      "binding": "LIFECYCLE",
+      "class_name": "CrawlLifecycle",
+      "limits": { "steps": 25000 }
+    }
+  ],
+  // Resource ids are provisioned by `wrangler deploy` on first deploy.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "raisin", "migrations_dir": "../../packages/db/migrations" }
+  ],
+  "kv_namespaces": [{ "binding": "ROBOTS_CACHE" }],
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "raisin-data" }],
+  "browser": { "binding": "BROWSER" },
+  "ai": { "binding": "AI" },
+  "vectorize": [{ "binding": "VECTORS", "index_name": "raisin-pages" }],
+  // Crawl-finished notices. Simulated locally: messages are written to files.
+  "send_email": [{ "name": "EMAIL" }],
+  "vars": {
+    // Floor between requests to one host across every crawl on the platform.
+    "HOST_MIN_INTERVAL_MS": "50",
+    // Optional AI Gateway id for caching, rate limits and cost tracking. Empty = call Workers AI directly.
+    "AI_GATEWAY_ID": "",
+    // Links in emails point here.
+    "APP_URL": "https://raisin.run",
+    // Sender for crawl-finished notices; empty disables them.
+    "EMAIL_FROM": "Raisin <notifications@raisin.run>"
+  }
+}

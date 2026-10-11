@@ -1,0 +1,5 @@
+BETTER_AUTH_SECRET=change-me-to-a-long-random-string
+APP_URL=http://localhost:5173
+# GOOGLE_CLIENT_ID=
+# GOOGLE_CLIENT_SECRET=
+# TURNSTILE_SECRET_KEY=

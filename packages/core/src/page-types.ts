@@ -1,0 +1,140 @@
+/**
+ * Page-type grouping: turns a crawl's HTML pages into "340 product pages, 8 categories, 1 home
+ * page". Two signals, both captured at ingest: the URL pattern (`urlPattern`) and the template
+ * fingerprint (`PageData.templateHash`, a simhash of element structure). Pure, so it is tested
+ * without a Durable Object; the Crawl DO feeds it rows and writes back the result.
+ *
+ *   1. Group pages by URL pattern.
+ *   2. Split each group by template, so a pattern serving two layouts becomes two groups.
+ *   3. Merge groups from different patterns that share a template (`/shoes/{slug}` and
+ *      `/hats/{slug}` are both product pages).
+ *
+ * Steps 2 and 3 are greedy: each page or group joins the first existing cluster whose
+ * representative is close enough, else starts its own. Inputs are processed most important
+ * first, so representatives are the pages and groups that matter most, and nothing chains: every
+ * member is within the threshold of its representative, never just of another member.
+ */
+
+/** Pages further than this from their pattern's representative split into a separate group. */
+export const SPLIT_BITS = 8;
+/** Groups from different patterns merge when their representatives are at most this far apart. */
+export const MERGE_BITS = 6;
+
+export type PageTypeInput = {
+  id: number;
+  pattern: string;
+  /** Template simhash, 16 hex characters. */
+  template: string;
+  /** Comma-separated structured data types, as stored in `pages.structured_types`. */
+  structuredTypes: string | null;
+  linkScore: number | null;
+};
+
+export type PageType = {
+  /** 1-based, ordered by page count (largest first). */
+  id: number;
+  label: string;
+  /** Every URL pattern in the type, largest first. */
+  patterns: string[];
+  sdType: string | null;
+  pageIds: number[];
+  /** The member with the highest Link Score. */
+  sampleId: number;
+};
+
+type Hash = { hi: number; lo: number };
+
+type Group = {
+  pattern: string;
+  rep: Hash;
+  pages: PageTypeInput[];
+};
+
+export function groupPageTypes(pages: PageTypeInput[]): PageType[] {
+  const ordered = [...pages].sort(byImportance);
+
+  // 1 + 2: by pattern, then by template within each pattern.
+  const byPattern = new Map<string, Group[]>();
+  for (const page of ordered) {
+    const hash = parseHash(page.template);
+    const groups = byPattern.get(page.pattern) ?? [];
+    const home = groups.find((g) => distance(g.rep, hash) <= SPLIT_BITS);
+    if (home) home.pages.push(page);
+    else groups.push({ pattern: page.pattern, rep: hash, pages: [page] });
+    byPattern.set(page.pattern, groups);
+  }
+
+  // 3: merge across patterns, biggest groups first so they become the representatives.
+  const groups = [...byPattern.values()]
+    .flat()
+    .sort((a, b) => b.pages.length - a.pages.length || byImportance(a.pages[0]!, b.pages[0]!));
+  const clusters: { rep: Hash; groups: Group[] }[] = [];
+  for (const group of groups) {
+    const home = clusters.find((c) => distance(c.rep, group.rep) <= MERGE_BITS);
+    if (home) home.groups.push(group);
+    else clusters.push({ rep: group.rep, groups: [group] });
+  }
+
+  return clusters
+    .map((c) => describe(c.groups))
+    .sort((a, b) => b.pageIds.length - a.pageIds.length || a.label.localeCompare(b.label))
+    .map((t, i) => ({ ...t, id: i + 1 }));
+}
+
+function describe(groups: Group[]): Omit<PageType, 'id'> {
+  const counts = new Map<string, number>();
+  for (const g of groups) counts.set(g.pattern, (counts.get(g.pattern) ?? 0) + g.pages.length);
+  const patterns = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([p]) => p);
+  const members = groups.flatMap((g) => g.pages).sort(byImportance);
+  const sdType = dominantType(members);
+  const extra = patterns.length > 1 ? ` (+${patterns.length - 1})` : '';
+  return {
+    label: `${sdType ? `${sdType} · ` : ''}${patterns[0]}${extra}`,
+    patterns,
+    sdType,
+    pageIds: members.map((p) => p.id),
+    sampleId: members[0]!.id,
+  };
+}
+
+/** The structured data type on more than half the members, if any. */
+function dominantType(pages: PageTypeInput[]): string | null {
+  const counts = new Map<string, number>();
+  for (const p of pages) {
+    for (const t of new Set((p.structuredTypes ?? '').split(',').map((s) => s.trim()))) {
+      if (t && t !== 'invalid') counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [t, n] of counts) {
+    if (n > bestCount || (n === bestCount && best !== null && t < best)) {
+      best = t;
+      bestCount = n;
+    }
+  }
+  return bestCount * 2 > pages.length ? best : null;
+}
+
+function byImportance(a: PageTypeInput, b: PageTypeInput): number {
+  return (b.linkScore ?? 0) - (a.linkScore ?? 0) || a.id - b.id;
+}
+
+function parseHash(hex: string): Hash {
+  return {
+    hi: Number.parseInt(hex.slice(0, 8), 16) | 0,
+    lo: Number.parseInt(hex.slice(8, 16), 16) | 0,
+  };
+}
+
+function distance(a: Hash, b: Hash): number {
+  return popcount(a.hi ^ b.hi) + popcount(a.lo ^ b.lo);
+}
+
+function popcount(x: number): number {
+  let v = x - ((x >>> 1) & 0x55555555);
+  v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+  return (((v + (v >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+}

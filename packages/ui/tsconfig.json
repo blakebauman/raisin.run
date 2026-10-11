@@ -1,0 +1,11 @@
+{
+  "extends": "@raisin/typescript-config/react-app.json",
+  "compilerOptions": {
+    // Lets the shadcn CLI resolve its aliases when adding components here.
+    "paths": {
+      "@raisin/ui": ["./src"],
+      "@raisin/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,4 @@
+{
+  "extends": "@raisin/typescript-config/worker.json",
+  "include": ["src"]
+}

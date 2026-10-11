@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-10T00:31:34.038056+00:00",
+  "title": "Design System: Raisin",
+  "extensions": {
+    "colorMeta": {
+      "raisin-skin": {
+        "role": "primary",
+        "displayName": "Raisin Skin",
+        "canonical": "oklch(0.45 0.14 320)",
+        "tonalRamp": [
+          "oklch(0.15 0.093 320.0)",
+          "oklch(0.26 0.111 320.0)",
+          "oklch(0.37 0.13 320.0)",
+          "oklch(0.48 0.14 320.0)",
+          "oklch(0.6 0.14 320.0)",
+          "oklch(0.72 0.131 320.0)",
+          "oklch(0.84 0.111 320.0)",
+          "oklch(0.95 0.093 320.0)"
+        ]
+      },
+      "raisin-ring": {
+        "role": "primary",
+        "displayName": "Raisin Ring",
+        "canonical": "oklch(0.55 0.14 320)",
+        "tonalRamp": [
+          "oklch(0.15 0.093 320.0)",
+          "oklch(0.26 0.111 320.0)",
+          "oklch(0.37 0.13 320.0)",
+          "oklch(0.48 0.14 320.0)",
+          "oklch(0.6 0.14 320.0)",
+          "oklch(0.72 0.131 320.0)",
+          "oklch(0.84 0.111 320.0)",
+          "oklch(0.95 0.093 320.0)"
+        ]
+      },
+      "raisin-wash": {
+        "role": "primary",
+        "displayName": "Raisin Wash",
+        "canonical": "oklch(0.955 0.012 320)",
+        "tonalRamp": [
+          "oklch(0.15 0.012 320.0)",
+          "oklch(0.26 0.012 320.0)",
+          "oklch(0.37 0.012 320.0)",
+          "oklch(0.48 0.012 320.0)",
+          "oklch(0.6 0.012 320.0)",
+          "oklch(0.72 0.012 320.0)",
+          "oklch(0.84 0.012 320.0)",
+          "oklch(0.95 0.012 320.0)"
+        ]
+      },
+      "logo-raisin": {
+        "role": "primary",
+        "displayName": "Logo Raisin",
+        "canonical": "#5b2a5e",
+        "tonalRamp": [
+          "oklch(0.15 0.067 323.0)",
+          "oklch(0.26 0.079 323.0)",
+          "oklch(0.37 0.09 323.0)",
+          "oklch(0.48 0.09 323.0)",
+          "oklch(0.6 0.09 323.0)",
+          "oklch(0.72 0.09 323.0)",
+          "oklch(0.84 0.079 323.0)",
+          "oklch(0.95 0.067 323.0)"
+        ]
+      },
+      "workbench-paper": {
+        "role": "neutral",
+        "displayName": "Workbench Paper",
+        "canonical": "oklch(0.985 0.002 286)",
+        "tonalRamp": [
+          "oklch(0.15 0.002 286.0)",
+          "oklch(0.26 0.002 286.0)",
+          "oklch(0.37 0.002 286.0)",
+          "oklch(0.48 0.002 286.0)",
+          "oklch(0.6 0.002 286.0)",
+          "oklch(0.72 0.002 286.0)",
+          "oklch(0.84 0.002 286.0)",
+          "oklch(0.95 0.002 286.0)"
+        ]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.15 0.0 0.0)",
+          "oklch(0.26 0.0 0.0)",
+          "oklch(0.37 0.0 0.0)",
+          "oklch(0.48 0.0 0.0)",
+          "oklch(0.6 0.0 0.0)",
+          "oklch(0.72 0.0 0.0)",
+          "oklch(0.84 0.0 0.0)",
+          "oklch(0.95 0.0 0.0)"
+        ]
+      },
+      "graphite-ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "oklch(0.141 0.005 285.823)",
+        "tonalRamp": [
+          "oklch(0.15 0.005 285.823)",
+          "oklch(0.26 0.005 285.823)",
+          "oklch(0.37 0.005 285.823)",
+          "oklch(0.48 0.005 285.823)",
+          "oklch(0.6 0.005 285.823)",
+          "oklch(0.72 0.005 285.823)",
+          "oklch(0.84 0.005 285.823)",
+          "oklch(0.95 0.005 285.823)"
+        ]
+      },
+      "zinc-muted": {
+        "role": "neutral",
+        "displayName": "Zinc Muted",
+        "canonical": "oklch(0.967 0.001 286.375)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 286.375)",
+          "oklch(0.26 0.001 286.375)",
+          "oklch(0.37 0.001 286.375)",
+          "oklch(0.48 0.001 286.375)",
+          "oklch(0.6 0.001 286.375)",
+          "oklch(0.72 0.001 286.375)",
+          "oklch(0.84 0.001 286.375)",
+          "oklch(0.95 0.001 286.375)"
+        ]
+      },
+      "zinc-muted-foreground": {
+        "role": "neutral",
+        "displayName": "Zinc Muted Foreground",
+        "canonical": "oklch(0.5 0.016 285.938)",
+        "tonalRamp": [
+          "oklch(0.15 0.016 285.938)",
+          "oklch(0.26 0.016 285.938)",
+          "oklch(0.37 0.016 285.938)",
+          "oklch(0.48 0.016 285.938)",
+          "oklch(0.6 0.016 285.938)",
+          "oklch(0.72 0.016 285.938)",
+          "oklch(0.84 0.016 285.938)",
+          "oklch(0.95 0.016 285.938)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.92 0.004 286.32)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 286.32)",
+          "oklch(0.26 0.004 286.32)",
+          "oklch(0.37 0.004 286.32)",
+          "oklch(0.48 0.004 286.32)",
+          "oklch(0.6 0.004 286.32)",
+          "oklch(0.72 0.004 286.32)",
+          "oklch(0.84 0.004 286.32)",
+          "oklch(0.95 0.004 286.32)"
+        ]
+      },
+      "input-stroke": {
+        "role": "neutral",
+        "displayName": "Input Stroke",
+        "canonical": "oklch(0.88 0.006 286.286)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 286.286)",
+          "oklch(0.26 0.006 286.286)",
+          "oklch(0.37 0.006 286.286)",
+          "oklch(0.48 0.006 286.286)",
+          "oklch(0.6 0.006 286.286)",
+          "oklch(0.72 0.006 286.286)",
+          "oklch(0.84 0.006 286.286)",
+          "oklch(0.95 0.006 286.286)"
+        ]
+      },
+      "destructive": {
+        "role": "error",
+        "displayName": "Destructive",
+        "canonical": "oklch(0.577 0.245 27.325)",
+        "tonalRamp": [
+          "oklch(0.15 0.147 27.325)",
+          "oklch(0.26 0.18 27.325)",
+          "oklch(0.37 0.212 27.325)",
+          "oklch(0.48 0.244 27.325)",
+          "oklch(0.6 0.245 27.325)",
+          "oklch(0.72 0.215 27.325)",
+          "oklch(0.84 0.18 27.325)",
+          "oklch(0.95 0.147 27.325)"
+        ]
+      },
+      "severity-issue": {
+        "role": "semantic",
+        "displayName": "Severity Issue",
+        "canonical": "oklch(0.58 0.21 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.129 25.0)",
+          "oklch(0.26 0.157 25.0)",
+          "oklch(0.37 0.185 25.0)",
+          "oklch(0.48 0.21 25.0)",
+          "oklch(0.6 0.21 25.0)",
+          "oklch(0.72 0.187 25.0)",
+          "oklch(0.84 0.157 25.0)",
+          "oklch(0.95 0.129 25.0)"
+        ]
+      },
+      "severity-warning": {
+        "role": "semantic",
+        "displayName": "Severity Warning",
+        "canonical": "oklch(0.7 0.15 65)",
+        "tonalRamp": [
+          "oklch(0.15 0.098 65.0)",
+          "oklch(0.26 0.118 65.0)",
+          "oklch(0.37 0.138 65.0)",
+          "oklch(0.48 0.15 65.0)",
+          "oklch(0.6 0.15 65.0)",
+          "oklch(0.72 0.139 65.0)",
+          "oklch(0.84 0.118 65.0)",
+          "oklch(0.95 0.098 65.0)"
+        ]
+      },
+      "severity-opportunity": {
+        "role": "semantic",
+        "displayName": "Severity Opportunity",
+        "canonical": "oklch(0.58 0.13 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.088 240.0)",
+          "oklch(0.26 0.105 240.0)",
+          "oklch(0.37 0.122 240.0)",
+          "oklch(0.48 0.13 240.0)",
+          "oklch(0.6 0.13 240.0)",
+          "oklch(0.72 0.123 240.0)",
+          "oklch(0.84 0.105 240.0)",
+          "oklch(0.95 0.088 240.0)"
+        ]
+      },
+      "status-ok": {
+        "role": "semantic",
+        "displayName": "Status OK (2xx)",
+        "canonical": "oklch(0.52 0.13 155)",
+        "tonalRamp": [
+          "oklch(0.15 0.088 155.0)",
+          "oklch(0.26 0.105 155.0)",
+          "oklch(0.37 0.122 155.0)",
+          "oklch(0.48 0.13 155.0)",
+          "oklch(0.6 0.13 155.0)",
+          "oklch(0.72 0.123 155.0)",
+          "oklch(0.84 0.105 155.0)",
+          "oklch(0.95 0.088 155.0)"
+        ]
+      },
+      "status-redirect": {
+        "role": "semantic",
+        "displayName": "Status Redirect (3xx)",
+        "canonical": "oklch(0.52 0.12 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.082 240.0)",
+          "oklch(0.26 0.098 240.0)",
+          "oklch(0.37 0.114 240.0)",
+          "oklch(0.48 0.12 240.0)",
+          "oklch(0.6 0.12 240.0)",
+          "oklch(0.72 0.116 240.0)",
+          "oklch(0.84 0.098 240.0)",
+          "oklch(0.95 0.082 240.0)"
+        ]
+      },
+      "status-client": {
+        "role": "semantic",
+        "displayName": "Status Client (4xx)",
+        "canonical": "oklch(0.58 0.14 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.093 60.0)",
+          "oklch(0.26 0.111 60.0)",
+          "oklch(0.37 0.13 60.0)",
+          "oklch(0.48 0.14 60.0)",
+          "oklch(0.6 0.14 60.0)",
+          "oklch(0.72 0.131 60.0)",
+          "oklch(0.84 0.111 60.0)",
+          "oklch(0.95 0.093 60.0)"
+        ]
+      },
+      "status-server": {
+        "role": "semantic",
+        "displayName": "Status Server (5xx)",
+        "canonical": "oklch(0.55 0.2 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.124 25.0)",
+          "oklch(0.26 0.15 25.0)",
+          "oklch(0.37 0.177 25.0)",
+          "oklch(0.48 0.2 25.0)",
+          "oklch(0.6 0.2 25.0)",
+          "oklch(0.72 0.179 25.0)",
+          "oklch(0.84 0.15 25.0)",
+          "oklch(0.95 0.124 25.0)"
+        ]
+      },
+      "row-hover": {
+        "role": "neutral",
+        "displayName": "Row Hover",
+        "canonical": "color-mix(in oklch, var(--muted) 60%, var(--background))",
+        "tonalRamp": [
+          "oklch(0.15 0.001 286.375)",
+          "oklch(0.26 0.001 286.375)",
+          "oklch(0.37 0.001 286.375)",
+          "oklch(0.48 0.001 286.375)",
+          "oklch(0.6 0.001 286.375)",
+          "oklch(0.72 0.001 286.375)",
+          "oklch(0.84 0.001 286.375)",
+          "oklch(0.95 0.001 286.375)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Landing hero only; 2.25rem below md."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Standalone page headings (/bot, auth)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card titles, feature names, section heads."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "The app's working size: grid, nav, buttons, forms."
+      },
+      "stat": {
+        "displayName": "Stat",
+        "purpose": "Overview stats and severity totals; tabular."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Column headers, hints, pills, the 'High priority' marker; uppercase + tracking for issues-panel section heads. Floor for all app text."
+      },
+      "data-mono": {
+        "displayName": "Data Mono",
+        "purpose": "Verbatim crawler output: URLs, status codes, user agents."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Outline buttons and inputs."
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "purpose": "Cards."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px var(--ring)",
+        "purpose": "Focus-visible on every interactive element."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-default",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Hover and focus color/shadow transitions (Tailwind default)."
+      },
+      {
+        "name": "pulse",
+        "value": "2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Live dot on running/analysing status pills."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one next action per view: Start crawling, New crawl.",
+      "html": "<button class=\"ds-btn-primary\">Start crawling</button>",
+      "css": ".ds-btn-primary { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; gap:8px; height:36px; padding:8px 16px; border:none; border-radius:6px; background:var(--primary, oklch(0.45 0.14 320)); color:var(--primary-foreground, oklch(0.985 0 0)); font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; outline:none; } .ds-btn-primary:hover { background:color-mix(in oklch, var(--primary, oklch(0.45 0.14 320)) 90%, transparent); } .ds-btn-primary:focus-visible { box-shadow:0 0 0 3px var(--ring, oklch(0.55 0.14 320)); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions: Pause, Export, Cancel.",
+      "html": "<button class=\"ds-btn-outline\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\"/></svg>Export CSV</button>",
+      "css": ".ds-btn-outline { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; gap:8px; height:36px; padding:8px 12px; border:1px solid var(--border, oklch(0.92 0.004 286.32)); border-radius:6px; background:var(--background, oklch(0.985 0.002 286)); color:var(--foreground, oklch(0.141 0.005 285.823)); font-size:14px; font-weight:500; box-shadow:0 1px 2px 0 rgb(0 0 0 / .05); cursor:pointer; transition:all .15s; outline:none; } .ds-btn-outline:hover { background:var(--accent, oklch(0.955 0.012 320)); color:var(--accent-foreground, oklch(0.3 0.08 320)); } .ds-btn-outline:focus-visible { border-color:var(--ring, oklch(0.55 0.14 320)); box-shadow:0 0 0 3px var(--ring, oklch(0.55 0.14 320)); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Toolbar and low-emphasis actions; fills only on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Sign out</button>",
+      "css": ".ds-btn-ghost { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; height:32px; padding:0 12px; border:none; border-radius:6px; background:transparent; color:var(--foreground, oklch(0.141 0.005 285.823)); font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; outline:none; } .ds-btn-ghost:hover { background:var(--accent, oklch(0.955 0.012 320)); color:var(--accent-foreground, oklch(0.3 0.08 320)); } .ds-btn-ghost:focus-visible { box-shadow:0 0 0 3px var(--ring, oklch(0.55 0.14 320)); }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Grid toolbar search with an inset magnifier.",
+      "html": "<label class=\"ds-search\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" placeholder=\"Search URLs\" /></label>",
+      "css": ".ds-search { position:relative; display:inline-block; width:288px; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); } .ds-search svg { position:absolute; left:10px; top:50%; transform:translateY(-50%); pointer-events:none; } .ds-input { font-family: Inter, ui-sans-serif, system-ui, sans-serif; width:100%; height:32px; padding:4px 12px 4px 32px; border:1px solid var(--input, oklch(0.88 0.006 286.286)); border-radius:6px; background:transparent; color:var(--foreground, oklch(0.141 0.005 285.823)); font-size:14px; box-shadow:0 1px 2px 0 rgb(0 0 0 / .05); outline:none; transition:box-shadow .15s, border-color .15s; } .ds-input::placeholder { color:var(--muted-foreground, oklch(0.5 0.016 285.938)); } .ds-input:focus-visible { border-color:var(--ring, oklch(0.55 0.14 320)); box-shadow:0 0 0 3px var(--ring, oklch(0.55 0.14 320)); }"
+    },
+    {
+      "name": "Crawl Tabs",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Crawl view tab row; active tab carries the purple underline.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab\">Overview</a><a class=\"ds-tab ds-tab-active\">Titles</a><a class=\"ds-tab\">Directives</a><a class=\"ds-tab\">Hreflang</a></nav>",
+      "css": ".ds-tabs { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:flex; gap:4px; border-bottom:1px solid var(--border, oklch(0.92 0.004 286.32)); } .ds-tab { margin-bottom:-1px; padding:8px 10px; border-bottom:2px solid transparent; font-size:14px; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); cursor:pointer; white-space:nowrap; } .ds-tab:hover { color:var(--foreground, oklch(0.141 0.005 285.823)); } .ds-tab-active { border-color:var(--primary, oklch(0.45 0.14 320)); color:var(--foreground, oklch(0.141 0.005 285.823)); font-weight:500; }"
+    },
+    {
+      "name": "Sidebar Nav",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "App sidebar items; active and hover share the Raisin Wash.",
+      "html": "<nav class=\"ds-side\"><a class=\"ds-side-item ds-side-active\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z\"/></svg>Projects</a><a class=\"ds-side-item\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg>Settings</a></nav>",
+      "css": ".ds-side { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:grid; gap:2px; width:208px; } .ds-side-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; font-size:14px; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); cursor:pointer; } .ds-side-item:hover, .ds-side-active { background:var(--accent, oklch(0.955 0.012 320)); color:var(--accent-foreground, oklch(0.3 0.08 320)); } .ds-side-active { font-weight:500; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Crawl state, tinted at 15%; live states pulse.",
+      "html": "<span class=\"ds-pill ds-pill-running\"><i></i>running</span> <span class=\"ds-pill ds-pill-done\">completed</span> <span class=\"ds-pill ds-pill-failed\">failed</span>",
+      "css": ".ds-pill { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:9999px; font-size:12px; font-weight:500; text-transform:capitalize; } .ds-pill i { width:6px; height:6px; border-radius:9999px; background:currentColor; animation:ds-pulse 2s cubic-bezier(.4,0,.6,1) infinite; } @keyframes ds-pulse { 50% { opacity:.5; } } .ds-pill-running { background:var(--accent, oklch(0.955 0.012 320)); color:var(--accent-foreground, oklch(0.3 0.08 320)); } .ds-pill-done { background:color-mix(in oklch, var(--status-ok, oklch(0.52 0.13 155)) 15%, transparent); color:var(--status-ok, oklch(0.52 0.13 155)); } .ds-pill-failed { background:color-mix(in oklch, var(--destructive, oklch(0.577 0.245 27.325)) 15%, transparent); color:var(--destructive, oklch(0.577 0.245 27.325)); }"
+    },
+    {
+      "name": "Data Grid Rows",
+      "kind": "custom",
+      "refersTo": "grid-cell",
+      "description": "The URL grid: sticky muted header, hairline rows, mono URLs and class-colored status codes.",
+      "html": "<table class=\"ds-grid\"><thead><tr><th class=\"n\">#</th><th>Address</th><th>Status</th><th>Title length</th></tr></thead><tbody><tr><td class=\"n\">1</td><td><a class=\"ds-url\">https://example.com/</a></td><td><span class=\"ds-code ok\">200</span></td><td class=\"t\">54</td></tr><tr class=\"sel\"><td class=\"n\">2</td><td><a class=\"ds-url\">https://example.com/old-page</a></td><td><span class=\"ds-code redir\">301</span></td><td class=\"t\">—</td></tr><tr><td class=\"n\">3</td><td><a class=\"ds-url\">https://example.com/missing</a></td><td><span class=\"ds-code client\">404</span></td><td class=\"t\">12</td></tr></tbody></table>",
+      "css": ".ds-grid { font-family: Inter, ui-sans-serif, system-ui, sans-serif; border-collapse:separate; border-spacing:0; font-size:14px; color:var(--foreground, oklch(0.141 0.005 285.823)); } .ds-grid th { position:sticky; top:0; background:var(--card, #fff); padding:8px 12px; border-bottom:1px solid var(--border, oklch(0.92 0.004 286.32)); font-size:12px; font-weight:500; text-align:left; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); } .ds-grid td { padding:6px 12px; border-bottom:1px solid var(--border, oklch(0.92 0.004 286.32)); } .ds-grid .n { width:48px; text-align:right; font-size:12px; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); font-variant-numeric:tabular-nums; } .ds-grid .t { font-variant-numeric:tabular-nums; } .ds-grid tbody tr:hover { background:var(--row-hover, color-mix(in oklch, oklch(0.967 0.001 286.375) 60%, oklch(0.985 0.002 286))); } .ds-grid tr.sel { background:var(--accent, oklch(0.955 0.012 320)); } .ds-url { font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px; cursor:pointer; } .ds-url:hover { text-decoration:underline; } .ds-code { font-family:'JetBrains Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; } .ds-code.ok { color:var(--status-ok, oklch(0.52 0.13 155)); } .ds-code.redir { color:var(--status-redirect, oklch(0.52 0.12 240)); } .ds-code.client { color:var(--status-client, oklch(0.58 0.14 60)); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Hairline-bordered Card White container, 12px corners.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Scheduled crawls</div><p class=\"ds-card-desc\">Run this project weekly and compare against the last crawl.</p></div>",
+      "css": ".ds-card { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display:flex; flex-direction:column; gap:6px; width:320px; padding:24px; border:1px solid var(--border, oklch(0.92 0.004 286.32)); border-radius:12px; background:var(--card, #fff); color:var(--card-foreground, oklch(0.141 0.005 285.823)); box-shadow:0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1); } .ds-card-title { font-weight:600; line-height:1; } .ds-card-desc { margin:0; font-size:14px; color:var(--muted-foreground, oklch(0.5 0.016 285.938)); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Workbench",
+    "overview": "Raisin is where an agency spends long, repetitive sessions working through crawl after crawl for client after client. The interface acts like a well-kept workbench: neutral zinc surfaces, hairline rules and plain type that stay out of the way. The work on it is the URL grid, the issue counts and the status codes, and that is what the eye should land on. Nothing in the chrome competes with the data.\n\nOne thin raisin-purple thread runs through the system. It marks where you are (the active tab, the selected row, the current nav item) and the one thing to do next (the primary button). Every other use of color carries a reading: an HTTP status class or an audit severity. The UI is dense, built for desktop working sessions, and comes in light and dark versions that follow the operating system.\n\nComponents are quiet until touched. At rest they are neutral and outlined. Purple washes and the focus ring appear only on hover, focus or selection.",
+    "keyCharacteristics": [
+      "Neutral zinc surfaces with a single purple accent (hue 320) that means \"here\" or \"act\"",
+      "Color is reserved for meaning: HTTP status classes and the three audit severities",
+      "Flat, hairline-bordered panels. Depth comes from tone, not shadow.",
+      "Compact controls (32–36px high), 14px body text, tabular figures everywhere numbers line up",
+      "Monospace for anything the crawler records verbatim (URLs, status codes, user agents)",
+      "Light and dark themes follow `prefers-color-scheme`; there is no manual toggle"
+    ],
+    "rules": [
+      {
+        "name": "The One Thread Rule",
+        "body": "Purple marks location or the next action, and nothing else. If an element is neither the current place nor the primary action, it isn't purple.",
+        "section": "colors"
+      },
+      {
+        "name": "The Reading Rule",
+        "body": "Every saturated color other than purple stands for a value: a status class or a severity. Never use a status or severity color for decoration, and never show a value's meaning with color alone. The number or label is always there too.",
+        "section": "colors"
+      },
+      {
+        "name": "The Verbatim Rule",
+        "body": "If the crawler recorded the text exactly as it found it (a URL, a status code, a header, a user agent), set it in mono. Prose about that text stays in Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Any number that sits in a column or updates live uses `tabular-nums`, so digits don't shift while a crawl runs.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "Separate regions with a 1px hairline border and a change of tone, never with a shadow. A panel that needs a shadow to stand out is in the wrong place.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep purple to the active tab, the selected row, the current nav item, the primary button and the focus ring (The One Thread Rule).",
+      "**Do** set URLs, status codes, headers and user agents in JetBrains Mono at 0.75rem (The Verbatim Rule).",
+      "**Do** use `tabular` on every number that is in a column or updates live.",
+      "**Do** separate panels with a hairline border and a Card White / Workbench Paper tone change.",
+      "**Do** pair every status or severity color with its number or label.",
+      "**Do** define every new color as a light/dark token pair in `app.css` and map it through `@theme inline`.",
+      "**Do** spell out priority as text (\"High priority\"), at 0.75rem or larger.",
+      "**Do** confirm deletes with `ConfirmDelete`, and keep destructive controls apart from routine ones."
+    ],
+    "donts": [
+      "**Don't** use status or severity colors for decoration, or reuse Destructive to show audit results.",
+      "**Don't** add a second accent hue. Interaction states use Raisin Wash, not new tints.",
+      "**Don't** lift panels with heavier shadows. Depth in this system comes from tone.",
+      "**Don't** make controls taller or text larger than the 14px body inside the app. Density is what makes long triage sessions work.",
+      "**Don't** use the logo color (#5b2a5e) for UI. Interface purple is Raisin Skin.",
+      "**Don't** put an eyebrow or kicker above a heading. The heading carries its own weight."
+    ]
+  }
+}

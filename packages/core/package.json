@@ -1,0 +1,23 @@
+{
+  "name": "@raisin/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Crawler logic with no bindings: URL normalisation, robots.txt, sitemaps, the HTMLRewriter extractor, SERP widths, simhash, the per-crawl schema and audit rules.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lint": "biome check .",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@raisin/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

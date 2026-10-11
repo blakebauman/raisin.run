@@ -1,0 +1,20 @@
+{
+  "name": "@raisin/fixture-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A small website with deliberate technical-SEO defects. Served as a Worker for manual crawls, and used as the outbound service in the engine's end-to-end tests.",
+  "exports": {
+    ".": "./src/site.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev --port 8790",
+    "lint": "biome check .",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@raisin/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

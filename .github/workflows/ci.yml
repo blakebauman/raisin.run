@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Every check runs even when an earlier one fails, so a red build reports
+      # all of its problems in one go instead of one per push.
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: pnpm lint
+
+      - name: Type-check
+        if: ${{ !cancelled() }}
+        run: pnpm check-types
+
+      - name: Build
+        if: ${{ !cancelled() }}
+        run: pnpm build
+
+      # Includes the engine's end-to-end crawl of the fixture site, run in workerd with
+      # queues, Durable Objects and the Workflow — no network or Cloudflare account needed.
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: pnpm test

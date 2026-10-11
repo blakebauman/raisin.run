@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "../../apps/web/app/app.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@raisin/ui",
+    "utils": "@raisin/ui/lib/utils",
+    "ui": "@raisin/ui",
+    "lib": "@raisin/ui/lib",
+    "hooks": "@raisin/ui/hooks"
+  }
+}
