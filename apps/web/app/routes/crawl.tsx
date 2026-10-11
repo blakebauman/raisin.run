@@ -9,7 +9,7 @@ import {
   TABS,
   TABS_BY_ID,
 } from '@raisin/core';
-import { crawls } from '@raisin/db';
+import { crawls, loadPageTypeNames } from '@raisin/db';
 import { Button } from '@raisin/ui/button';
 import {
   DropdownMenu,
@@ -45,6 +45,7 @@ import {
   Form,
   Link,
   redirect,
+  useActionData,
   useNavigate,
   useNavigation,
   useSearchParams,
@@ -55,12 +56,14 @@ import { ConfirmDelete } from '~/components/confirm-delete';
 import { CrawlOverview } from '~/components/crawl-overview';
 import { DataGrid, PAGE_SIZE } from '~/components/data-grid';
 import { IssuesPanel, type PanelState } from '~/components/issues-panel';
-import { PageTypes, type PageTypeView } from '~/components/page-types';
+import { type PageTypeEditError, PageTypes, type PageTypeView } from '~/components/page-types';
 import { UrlDetailPane } from '~/components/url-detail';
 import { useLiveProgress } from '~/components/use-live-progress';
 import { requireCrawl } from '~/lib/crawl-access.server';
 import { getProject } from '~/lib/crawls.server';
 import { db, engine } from '~/lib/env.server';
+import { isNamed, parsePageTypeEdit } from '~/lib/page-type-edits';
+import { applyPageTypeEdit } from '~/lib/page-types.server';
 import { getPlan, UNVERIFIED_LIMITS } from '~/lib/plans.server';
 import { canManage } from '~/lib/session.server';
 import { PREFS, parseHiddenColumns, readPref, writePref } from '~/lib/ui-prefs';
@@ -96,7 +99,11 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   let pageTypes: { types: PageTypeView[]; sitewide: IssueView[] } | null = null;
   let activeType: { id: number; label: string } | null = null;
   if (tabId === PAGE_TYPES_VIEW) {
-    pageTypes = toPageTypesView(await api.pageTypes(m.orgId, crawl.id));
+    const [types, names] = await Promise.all([
+      api.pageTypes(m.orgId, crawl.id),
+      loadPageTypeNames(db(), crawl.projectId),
+    ]);
+    pageTypes = toPageTypesView(types, names);
   } else if (tab) {
     if (pageType !== null) {
       const found = (await api.pageTypes(m.orgId, crawl.id)).find((t) => t.id === pageType);
@@ -166,7 +173,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   const { m, crawl } = await requireCrawl(request, params.crawlId);
-  const intent = String((await request.formData()).get('intent'));
+  const form = await request.formData();
+  const intent = String(form.get('intent'));
   if (intent === 'pause' || intent === 'resume' || intent === 'stop') {
     const status = await engine().control(m.orgId, crawl.id, intent);
     if (status === 'paused' || status === 'running' || status === 'stopping') {
@@ -182,6 +190,17 @@ export async function action({ request, params }: Route.ActionArgs) {
     await engine().purge(m.orgId, crawl.id);
     await db().delete(crawls).where(eq(crawls.id, crawl.id));
     throw redirect(`/app/projects/${crawl.projectId}`);
+  }
+  if (intent.startsWith('type-')) {
+    const edit = parsePageTypeEdit(form);
+    if (!edit) return data({ ok: false }, { status: 400 });
+    const result = await applyPageTypeEdit(m, crawl, edit);
+    if (!result.ok) {
+      const editError: PageTypeEditError = { typeId: edit.typeId, message: result.error };
+      return data({ ok: false, editError }, { status: 400 });
+    }
+    // Grouping again renumbers the types, so nothing in the old URL still points anywhere.
+    throw redirect(`/app/crawls/${crawl.id}?tab=${PAGE_TYPES_VIEW}`);
   }
   return data({ ok: false }, { status: 400 });
 }
@@ -207,7 +226,10 @@ type IssueView = PageTypeView['issues'][number];
  * Attach rule labels on the server, so the rule catalogue stays out of the browser bundle, and
  * pull out issues that affect nearly every page: they say nothing about any one template.
  */
-function toPageTypesView(types: PageTypeSummary[]): {
+function toPageTypesView(
+  types: PageTypeSummary[],
+  names: Record<string, string>,
+): {
   types: PageTypeView[];
   sitewide: IssueView[];
 } {
@@ -246,6 +268,7 @@ function toPageTypesView(types: PageTypeSummary[]): {
     types: types.map((t) => ({
       id: t.id,
       label: t.label,
+      named: isNamed(t, names),
       patterns: t.patterns,
       pageCount: t.pageCount,
       indexableCount: t.indexableCount,
@@ -278,6 +301,7 @@ export default function CrawlPage({ loaderData }: Route.ComponentProps) {
     page,
   } = loaderData;
   const progress = useLiveProgress(crawl.id, loaderData.progress);
+  const actionData = useActionData<typeof action>();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const navigation = useNavigation();
@@ -520,6 +544,10 @@ export default function CrawlPage({ loaderData }: Route.ComponentProps) {
               types={pageTypes.types}
               sitewide={pageTypes.sitewide}
               analysed={!IN_PROGRESS.has(progress.status)}
+              editable={progress.status === 'completed'}
+              editError={
+                (actionData as { editError?: PageTypeEditError } | undefined)?.editError ?? null
+              }
             />
           )}
           {grid && tab && (

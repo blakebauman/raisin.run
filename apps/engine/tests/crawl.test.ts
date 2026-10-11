@@ -151,6 +151,23 @@ describe('end-to-end crawl of the fixture site', () => {
     expect(new Set(grid.rows.map((r) => r.page_type))).toEqual(new Set([products.label]));
   });
 
+  it('regroups page types with names', async () => {
+    const before = await crawl().pageTypes();
+    // Split /gifts/{slug} out of the products, and give both halves names.
+    await crawl().assignPageTypes({ '/shop/{slug}': 'Products', '/gifts/{slug}': 'Gifts' });
+    const named = await crawl().pageTypes();
+    expect(named.length).toBe(before.length + 1);
+    const products = named.find((t) => t.label === 'Products')!;
+    const gifts = named.find((t) => t.label === 'Gifts')!;
+    expect([products.patterns, products.pageCount]).toEqual([['/shop/{slug}'], 2]);
+    expect([gifts.patterns, gifts.pageCount]).toEqual([['/gifts/{slug}'], 1]);
+    const grid = await crawl().grid({ tab: 'internal', pageType: gifts.id, limit: 50 });
+    expect(grid.rows.map((r) => r.page_type)).toEqual(['Gifts']);
+
+    await crawl().assignPageTypes({});
+    expect(await crawl().pageTypes()).toEqual(before);
+  });
+
   it('reports progress as completed', async () => {
     const p = await crawl().progress();
     expect(p.status).toBe('completed');
@@ -174,6 +191,9 @@ describe('comparison with the previous crawl', () => {
     )
       .bind(SECOND, ORG, config.startUrl, JSON.stringify(config), doName)
       .run();
+    await env.DB.prepare(
+      `INSERT INTO page_type_names (project_id, pattern, name) VALUES ('p1', '/journal/{slug}', 'Stories')`,
+    ).run();
     await crawl().init({ crawlId: SECOND, orgId: ORG, doName, config });
     await env.LIFECYCLE.create({
       id: SECOND,
@@ -190,6 +210,13 @@ describe('comparison with the previous crawl', () => {
       { timeout: 55_000, interval: 500 },
     );
   }, 60_000);
+
+  it("applies the project's page-type names", async () => {
+    const types = await crawl().pageTypes();
+    const stories = types.find((t) => t.label === 'Stories');
+    expect(stories?.patterns).toEqual(['/journal/{slug}']);
+    expect(stories?.pageCount).toBe(2);
+  });
 
   it('uses the first crawl as its baseline', async () => {
     const summary = await crawl().issueSummary();

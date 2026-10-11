@@ -67,6 +67,59 @@ describe('groupPageTypes', () => {
     expect(type!.sdType).toBeNull();
   });
 
+  describe('with names', () => {
+    it('labels a named pattern with its name, whatever its templates', () => {
+      const types = groupPageTypes(
+        [page('/p/{slug}', PRODUCT), page('/p/{slug}', STUB), page('/journal/{slug}', ARTICLE)],
+        { '/p/{slug}': 'Products' },
+      );
+      expect(types.map((t) => [t.label, t.pageIds.length])).toEqual([
+        ['Products', 2],
+        ['/journal/{slug}', 1],
+      ]);
+    });
+
+    it('merges patterns given the same name and keeps differently named ones apart', () => {
+      const types = groupPageTypes(
+        [
+          page('/shoes/{slug}', PRODUCT),
+          page('/hats/{slug}', PRODUCT),
+          page('/journal/{slug}', ARTICLE),
+          page('/news/{slug}', ARTICLE),
+        ],
+        {
+          '/shoes/{slug}': 'Shoes',
+          '/hats/{slug}': 'Hats',
+          '/journal/{slug}': 'Stories',
+          '/news/{slug}': 'Stories',
+        },
+      );
+      expect(types.map((t) => [t.label, t.patterns])).toEqual([
+        ['Stories', ['/journal/{slug}', '/news/{slug}']],
+        ['Hats', ['/hats/{slug}']],
+        ['Shoes', ['/shoes/{slug}']],
+      ]);
+    });
+
+    it('lets an unnamed pattern with the same template join a named type', () => {
+      const types = groupPageTypes(
+        [page('/shoes/{slug}', PRODUCT), page('/sale/{slug}', PRODUCT_VARIANT)],
+        { '/shoes/{slug}': 'Products' },
+      );
+      expect(types.map((t) => [t.label, t.patterns])).toEqual([
+        ['Products', ['/sale/{slug}', '/shoes/{slug}']],
+      ]);
+    });
+
+    it('ignores blank names and names for patterns not in the crawl', () => {
+      const types = groupPageTypes([page('/a/{slug}', PRODUCT)], {
+        '/a/{slug}': '  ',
+        '/gone/{slug}': 'Gone',
+      });
+      expect(types.map((t) => t.label)).toEqual(['/a/{slug}']);
+    });
+  });
+
   it('returns nothing for no pages', () => {
     expect(groupPageTypes([])).toEqual([]);
   });

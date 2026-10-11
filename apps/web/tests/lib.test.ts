@@ -1,6 +1,7 @@
 import { DEFAULT_USER_AGENT } from '@raisin/core';
 import { describe, expect, it } from 'vitest';
 import { parseConfigForm, presetFor, sanitizeOverrides, USER_AGENTS } from '../app/lib/config-form';
+import { parsePageTypeEdit, planPageTypeEdit } from '../app/lib/page-type-edits';
 import { safeNext } from '../app/lib/safe-next';
 import { nextRun } from '../app/lib/schedule-time';
 
@@ -119,5 +120,75 @@ describe('sanitizeOverrides', () => {
     expect(sanitizeOverrides(null)).toEqual({});
     expect(sanitizeOverrides('maxUrls=10')).toEqual({});
     expect(sanitizeOverrides([1, 2])).toEqual({});
+  });
+});
+
+describe('page-type edits', () => {
+  const types = [
+    { id: 1, label: 'Product · /shop/{slug} (+1)', patterns: ['/shop/{slug}', '/gifts/{slug}'] },
+    { id: 2, label: 'Stories', patterns: ['/journal/{slug}'] },
+  ];
+  const names = { '/journal/{slug}': 'Stories' };
+  const form = (fields: Record<string, string>) => {
+    const f = new FormData();
+    for (const [k, v] of Object.entries(fields)) f.set(k, v);
+    return f;
+  };
+
+  it('parses only well-formed edits', () => {
+    expect(parsePageTypeEdit(form({ intent: 'type-merge', typeId: '1', into: '2' }))).toEqual({
+      kind: 'merge',
+      typeId: 1,
+      into: 2,
+    });
+    expect(parsePageTypeEdit(form({ intent: 'type-merge', typeId: '1', into: 'x' }))).toBeNull();
+    expect(parsePageTypeEdit(form({ intent: 'type-reset', typeId: '-3' }))).toBeNull();
+    expect(parsePageTypeEdit(form({ intent: 'delete', typeId: '1' }))).toBeNull();
+  });
+
+  it('renames every pattern of a type, tidying whitespace', () => {
+    expect(
+      planPageTypeEdit(types, names, { kind: 'rename', typeId: 1, name: '  Shop   items ' }),
+    ).toEqual({ set: { '/shop/{slug}': 'Shop items', '/gifts/{slug}': 'Shop items' }, clear: [] });
+    expect(planPageTypeEdit(types, names, { kind: 'rename', typeId: 1, name: ' ' })).toEqual({
+      error: 'Enter a name.',
+    });
+  });
+
+  it("merges into the target's name, naming the target's patterns too", () => {
+    expect(planPageTypeEdit(types, names, { kind: 'merge', typeId: 2, into: 1 })).toEqual({
+      set: {
+        '/shop/{slug}': 'Product · /shop/{slug}',
+        '/gifts/{slug}': 'Product · /shop/{slug}',
+        '/journal/{slug}': 'Product · /shop/{slug}',
+      },
+      clear: [],
+    });
+    expect(planPageTypeEdit(types, names, { kind: 'merge', typeId: 2, into: 2 })).toHaveProperty(
+      'error',
+    );
+  });
+
+  it('splits a pattern out and keeps the rest under the type name', () => {
+    expect(
+      planPageTypeEdit(types, names, { kind: 'split', typeId: 1, pattern: '/gifts/{slug}' }),
+    ).toEqual({
+      set: { '/shop/{slug}': 'Product · /shop/{slug}', '/gifts/{slug}': '/gifts/{slug}' },
+      clear: [],
+    });
+    expect(
+      planPageTypeEdit(types, names, { kind: 'split', typeId: 2, pattern: '/journal/{slug}' }),
+    ).toHaveProperty('error');
+  });
+
+  it('resets only the names that exist', () => {
+    expect(planPageTypeEdit(types, names, { kind: 'reset', typeId: 2 })).toEqual({
+      set: {},
+      clear: ['/journal/{slug}'],
+    });
+    expect(planPageTypeEdit(types, names, { kind: 'reset', typeId: 1 })).toEqual({
+      set: {},
+      clear: [],
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from './schema';
 
@@ -46,4 +46,16 @@ export async function addUsage(
         aiCalls: sql`${schema.usage.aiCalls} + ${aiCalls}`,
       },
     });
+}
+
+/** A project's page-type names, as `groupPageTypes` takes them: URL pattern → name. */
+export async function loadPageTypeNames(
+  db: Db,
+  projectId: string,
+): Promise<Record<string, string>> {
+  const rows = await db
+    .select({ pattern: schema.pageTypeNames.pattern, name: schema.pageTypeNames.name })
+    .from(schema.pageTypeNames)
+    .where(eq(schema.pageTypeNames.projectId, projectId));
+  return Object.fromEntries(rows.map((r) => [r.pattern, r.name]));
 }

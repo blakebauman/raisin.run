@@ -303,6 +303,24 @@ export const notificationPrefs = sqliteTable('notification_prefs', {
   updatedAt: ts('updated_at').notNull().default(now),
 });
 
+/**
+ * Names people give page types, per project and URL pattern. Grouping applies them to every crawl
+ * of the project (see `groupPageTypes` in @raisin/core).
+ */
+export const pageTypeNames = sqliteTable(
+  'page_type_names',
+  {
+    projectId: text('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    pattern: text('pattern').notNull(),
+    name: text('name').notNull(),
+    updatedBy: text('updated_by').references(() => user.id, { onDelete: 'set null' }),
+    updatedAt: ts('updated_at').notNull().default(now),
+  },
+  (t) => [primaryKey({ columns: [t.projectId, t.pattern] })],
+);
+
 export const authSchema = {
   user,
   session,

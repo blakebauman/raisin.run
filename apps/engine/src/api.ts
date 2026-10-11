@@ -12,6 +12,7 @@ import {
   type GridResult,
   type IssueSummary,
   type Overview,
+  type PageTypeNames,
   type PageTypeSummary,
   type ProgressResult,
   type StartCrawlInput,
@@ -71,6 +72,10 @@ export class EngineApi extends WorkerEntrypoint<Env> implements EngineRpc {
 
   async pageTypes(orgId: string, crawlId: string): Promise<PageTypeSummary[]> {
     return this.crawl(orgId, crawlId).pageTypes();
+  }
+
+  async regroupPageTypes(orgId: string, crawlId: string, names: PageTypeNames): Promise<number> {
+    return this.crawl(orgId, crawlId).assignPageTypes(names);
   }
 
   async urlDetail(orgId: string, crawlId: string, urlId: number): Promise<UrlDetail | null> {

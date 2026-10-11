@@ -3,7 +3,7 @@
  * retryable step, so a deploy or an isolate crash mid-crawl resumes where it stopped:
  *
  *   mark running → discover sitemaps → start the Crawl DO → wait for "drained"
- *   → analysis (link counts, redirect loops, near-duplicates, Link Score, audit rules)
+ *   → analysis (link counts, redirect loops, near-duplicates, Link Score, page types, audit rules)
  *   → AI similarity (optional) → baseline from the previous crawl → CSV export to R2
  *   → write the summary to D1.
  */
@@ -23,6 +23,7 @@ import {
   addUsage,
   crawls,
   createDb,
+  loadPageTypeNames,
   member,
   notificationPrefs,
   projects,
@@ -113,7 +114,15 @@ export class CrawlLifecycle extends WorkflowEntrypoint<Env, LifecycleParams> {
       await step.do('analyse-pagerank-finish', retry, async () =>
         crawl().analyse('pagerank-finish'),
       );
-      await step.do('analyse-page-types', retry, async () => crawl().analyse('page-types'));
+      await step.do('analyse-page-types', retry, async () => {
+        const row = await db
+          .select({ projectId: crawls.projectId })
+          .from(crawls)
+          .where(eq(crawls.id, crawlId))
+          .limit(1);
+        const names = row[0] ? await loadPageTypeNames(db, row[0].projectId) : {};
+        return crawl().assignPageTypes(names);
+      });
 
       let aiCalls = 0;
       if (event.payload.ai) aiCalls = await this.semanticSimilarity(step, crawlId, doName);

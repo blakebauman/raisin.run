@@ -37,6 +37,7 @@ import {
   type Overview,
   PAGE_RULES,
   type PageRow,
+  type PageTypeNames,
   type PageTypeSummary,
   type ProgressResult,
   passesFilters,
@@ -934,8 +935,6 @@ export class CrawlDO extends DurableObject<Env> {
       case 'pagerank-finish':
         this.pagerankFinish();
         return { ok: true };
-      case 'page-types':
-        return { ok: true, detail: this.groupPageTypes() };
       case 'page-rules':
         this.materialisePageRules();
         return { ok: true };
@@ -946,8 +945,12 @@ export class CrawlDO extends DurableObject<Env> {
     }
   }
 
-  /** Rebuild `page_types` and `pages.page_type_id` from URL patterns and template hashes. */
-  private groupPageTypes(): number {
+  /**
+   * Rebuild `page_types` and `page_shapes.page_type_id` from URL patterns, template signatures
+   * and the project's page-type names. Run at analysis, and again whenever someone renames,
+   * merges or splits a type.
+   */
+  assignPageTypes(names: PageTypeNames = {}): number {
     const rows = this.sql
       .exec<{
         id: number;
@@ -962,7 +965,7 @@ export class CrawlDO extends DurableObject<Env> {
          WHERE p.status = 200`,
       )
       .toArray();
-    const types = groupPageTypes(rows);
+    const types = groupPageTypes(rows, names);
     this.ctx.storage.transactionSync(() => {
       this.sql.exec('DELETE FROM page_types');
       this.sql.exec('UPDATE page_shapes SET page_type_id = NULL WHERE page_type_id IS NOT NULL');

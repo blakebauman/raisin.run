@@ -4,6 +4,7 @@
  * Workers build independently and this file is the only thing they share about each other.
  */
 
+import type { PageTypeNames } from './page-types';
 import type { Column, GridQuery } from './tabs';
 import type { CrawlConfig, CrawlProgress, CrawlStatus } from './types';
 
@@ -106,6 +107,8 @@ export interface EngineRpc {
   issues(orgId: string, crawlId: string): Promise<IssueSummary>;
   overview(orgId: string, crawlId: string): Promise<Overview>;
   pageTypes(orgId: string, crawlId: string): Promise<PageTypeSummary[]>;
+  /** Group a finished crawl's pages again with the project's current page-type names. */
+  regroupPageTypes(orgId: string, crawlId: string, names: PageTypeNames): Promise<number>;
   urlDetail(orgId: string, crawlId: string, urlId: number): Promise<UrlDetail | null>;
   suggest(
     orgId: string,
